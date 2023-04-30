@@ -1,0 +1,31 @@
+Hi welcome to Autoreceipt 1.0
+
+Getting Started
+
+To get started with AutoReceipt, follow these simple steps:
+
+1.If youre reading this I assume you have downloaded and unzipped it/extracted it in its
+entirety. This will run within the folder it is saved in, likely to be the downloads folder.
+
+2.Click "autorecipt.bat" which will open a terminal and run the necessary environment variables
+needed. Give it a moment then you will see something like.
+
+Watching for file changes with StatReloader
+Performing system checks...
+
+System check identified no issues (0 silenced).
+April 24, 2023 - 19:46:49
+Django version 4.1.7, using settings 'autoreceipt.settings'
+Starting development server at http://127.0.0.1:5000/
+Quit the server with CTRL-BREAK.
+
+The "http://127.0.0.1:5000/" is the address where you will find the app on your browser.
+
+Click it while holding Ctrl to open it on browser.
+
+Minimise the terminal, and use the app.
+
+Things to note, This foldercontains an excel template document called "Autoreceipt_template.xlsx", which is the layout in which the application will accept data without trouble.
+
+Files downloaded are saved to downloads.
+

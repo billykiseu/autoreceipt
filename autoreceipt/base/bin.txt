@@ -1,0 +1,132 @@
+def generate_pdf(transaction):
+    # Define the path to the receipt template file
+    template_path = os.path.join(settings.STATIC_ROOT, 'assets', 'receipt_template.pdf')
+    print(f"Using template file: {template_path}")
+
+    # Open the existing PDF file
+    with open(template_path, 'rb') as existing_pdf_file:
+        existing_pdf = PdfReader(existing_pdf_file)
+        # Get the first page of the PDF
+        page = existing_pdf.pages[0]
+
+        # Modify the contents of the page
+        page_content = page.extract_text()
+        page_content = page_content.replace('1', transaction['name'])
+        page_content = page_content.replace('2', transaction['transaction_type'])
+        page_content = page_content.replace('3', str(transaction['amount']))
+        page_content = page_content.replace('4', transaction['email'])
+
+        # Write the modified content to a new PDF file
+        now = datetime.now()
+        date_string = now.strftime("%Y-%m-%d-%H-%M-%S")
+        new_pdf = os.path.join(settings.STATIC_ROOT, 'receipts', f"receipt_{date_string}_{transaction['name']}.pdf")
+        with open(new_pdf, 'wb') as output_pdf_file:
+            output_pdf = PdfWriter()
+            output_pdf.add_page(page)
+            output_pdf.write(output_pdf_file)
+
+    return new_pdf
+
+
+
+ def generate_pdf(transaction):
+    # Define the path to the receipt template file
+    template_path = os.path.join(settings.STATIC_ROOT, 'assets', 'receipt_template2.pdf')
+    print(f"Using template file: {template_path}")
+
+    # Open the existing PDF file
+    existing_pdf = PyPDF2.PdfReader(open(template_path, 'rb'))
+
+    # Create a new PDF file with the same pages as the template
+    new_pdf = PyPDF2.PdfWriter()
+    for page in existing_pdf.pages:
+        new_pdf.add_page(page)
+
+    # Fill in the form fields
+    new_pdf_form = new_pdf.getFields()
+    new_pdf_form['name'][0] = transaction['name']
+    new_pdf_form['transaction_type'][0] = transaction['transaction_type']
+    new_pdf_form['amount'][0] = str(transaction['amount'])
+    new_pdf_form['contact'][0] = transaction['email']
+
+    # Write the modified content to a new PDF file
+    now = datetime.datetime.now()
+    date_string = now.strftime("%Y-%m-%d-%H-%M-%S")
+    new_pdf_path = os.path.join(settings.STATIC_ROOT, 'receipts', f"receipt_{date_string}_{transaction['name']}.pdf")
+    with open(new_pdf_path, 'wb') as new_pdf_file:
+        new_pdf.write(new_pdf_file)
+
+    return new_pdf_path
+
+
+def generate_pdf(transaction):
+    # Define the path to the receipt template file
+    template_path = os.path.join(settings.STATIC_ROOT, 'assets', 'receipt_template2.pdf')
+    print(f"Using template file: {template_path}")
+
+    # Open the existing PDF file
+    existing_pdf = pdfrw.PdfReader(template_path)
+
+    # Fill in the form fields
+    existing_pdf['name'] = transaction['name']
+    existing_pdf['transaction_type'] = transaction['transaction_type']
+    existing_pdf['amount'] = str(transaction['amount'])
+    existing_pdf['contact'] = transaction['email']
+
+    # Write the modified content to a new PDF file
+    now = datetime.now()
+    date_string = now.strftime("%Y-%m-%d-%H-%M-%S")
+    new_pdf_path = os.path.join(settings.STATIC_ROOT, 'receipts', f"receipt_{date_string}_{transaction['name']}.pdf")
+    pdfrw.PdfWriter().write(new_pdf_path, existing_pdf)
+
+    return new_pdf_path
+
+
+ # Check if the PDF was successfully created
+    if not pdf.err:
+        # Return the PDF file as a BytesIO object
+        result.seek(0)
+        return result
+
+    return None
+
+def send_whatsapp(transactions):
+    for transaction in transactions:
+        new_pdf = generate_pdf(transaction)
+        phone = transaction.get('phone')    
+        
+        # Check if phone number starts with '254'
+        if phone.startswith('254'):
+            phone = '+' + phone
+        else:
+            phone = '+254' + phone  # add '+254' at the beginning of the phone number
+
+        chat_url = f'https://wa.me/{phone}'
+        
+        # Check if user has WhatsApp installed
+        whatsapp_installed = webbrowser.can_open(chat_url)
+        
+        if whatsapp_installed:
+            # If WhatsApp is installed, open the chat URL in the user's default browser
+            webbrowser.open(chat_url)
+        else:
+            # If WhatsApp is not installed, fall back to using the web version
+            driver = webdriver.Chrome()  # or webdriver.Firefox()
+            driver.get('https://web.whatsapp.com')
+
+            # Save the PDF file to disk
+            pdf_name = f'{transaction.get("name")}.pdf'
+            pdf_path = os.path.join(settings.STATIC_ROOT,'receipts', pdf_name)
+            with open(pdf_path, 'wb') as file:
+                file.write(new_pdf.getvalue())
+
+            # Attach the PDF to the WhatsApp message
+            attachment_box = driver.find_element_by_xpath("//input[@accept='*/*']")
+            attachment_box.send_keys(pdf_path)
+            time.sleep(3)
+
+            send_button = driver.find_element_by_xpath("//span[@data-icon='send']")
+            send_button.click()
+            time.sleep(3)
+
+            driver.quit()

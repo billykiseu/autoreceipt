@@ -1,0 +1,17 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>AutoReceipt</h1>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="file">Upload an Excel file:</label>
+      <input type="file" name="file" id="file">
+    </div>
+    <button type="submit" class="btn btn-primary">Preview Data</button>
+  </form>
+  <br>
+
+  <a href="{% url 'cleanup' %}" class="btn btn-primary">Clean Up Data</a>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Cleanup Data</h2>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div>
+        <label for="file">Choose a file:</label>
+        <input type="file" name="file" accept=".csv,.xlsx,.xls,.qfx,.ofx,.pdf">
+    </div>
+    <div>
+        <button type="submit">Cleanup</button>
+    </div>
+</form>
+
+{% if error_msg %}
+    <div class="alert alert-danger" role="alert">{{ error_msg }}</div>
+{% endif %}
+
+{% if success_msg %}
+    <div class="alert alert-success" role="alert">{{ success_msg }}</div>
+{% endif %}
+
+{% if messages %}
+
+  <ul class="messages">
+      {% for message in messages %}
+          <label {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</label>
+      {% endfor %}
+  </ul>
+{% endif %}
+
+  
+
+{% endblock %}

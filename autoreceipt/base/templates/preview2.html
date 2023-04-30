@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <form method="POST" action="{% url 'cleanup' %}">
+        {% csrf_token %}
+        <table>
+            <thead>
+                <tr>
+                    <th>House Number</th>
+                    <th>Name</th>
+                    <th>Date</th>
+                    <th>Phone</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{ preview|safe }}
+            </tbody>
+        </table>
+
+        <h2>Save Output</h2>
+        <label for="output_path">Output Path:</label>
+        <input type="text" id="output_path" name="output_path" value="{{ output_path }}" readonly>
+        <br>
+        <input type="submit" value="Save">
+    </form>
+
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Preview Transactions</h2>
+  <p>Preview the uploaded transactions before sending the receipts to recipients.</p>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>House Number</th>
+        <th>Name</th>
+        <th>Date</th>
+        <th>Phone</th>
+        <th>Description</th>
+        <th>Amount</th>
+        <th>Email</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for transaction in transactions %}
+      <tr>
+        <td>{{ transaction.house_number }}</td>
+        <td>{{ transaction.name }}</td>
+        <td>{{ transaction.date }}</td>
+        <td>{{ transaction.phone }}</td>
+        <td>{{ transaction.description }}</td>
+        <td>{{ transaction.amount }}</td>
+        <td>{{ transaction.email }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <form method="post" action="{% url 'save_receipts' %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary">Save Receipts</button>
+  </form>
+
+  <form method="post" action="{% url 'send_emails' %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary">Send Emails</button>
+  </form>
+  <br>
+  <a href="{% url 'template' %}" class="btn btn-primary">Preview Receipt</a>
+
+{% endblock %}
